@@ -1,0 +1,438 @@
+port: 7890
+socks-port: 7891
+# HTTP(S) and SOCKS4(A)/SOCKS5 server on the same port
+#mixed-port: 7892
+# Transparent proxy server port for Linux and macOS (Redirect TCP and TProxy UDP)
+#redir-port: 7893
+# Transparent proxy server port for Linux (TProxy TCP and TProxy UDP)
+tproxy-port: 7894
+
+mode: Rule
+log-level: info
+ipv6: true
+allow-lan: true
+tcp-concurrent: true
+unified-delay: false
+
+external-controller: 127.0.0.1:9090
+find-process-mode: strict
+global-client-fingerprint: chrome
+
+geodata-mode: true
+geox-url:
+  geoip: "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat"
+  geosite: "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat"
+  mmdb: "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/Country.mmdb"
+
+sniffer:
+  enable: true
+  sniff:
+    TLS:
+      ports: [443, 8443]
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+
+tun:
+  enable: true
+  device: meta
+  stack: system # 或 gvisor
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+  auto-route: true # auto set global route
+  auto-detect-interface: true # conflict with interface-name
+
+dns:
+  enable: true
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  fallback:
+    - https://doh.buzz:8000/dns-query
+    - https://doh.beauty:8000/dns-query
+    - https://cloudflare-dns.com/dns-query
+    - tls://1.1.1.1:853
+    - tls://1.0.0.1:853
+    - https://1.1.1.1/dns-query
+    - https://1.0.0.1/dns-query
+    - tls://8.8.8.8:853
+    - tls://8.8.4.4:853
+    - https://dns.google/dns-query
+    - https://dns.twnic.tw/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+    domain:
+      - +.google.com
+      - +.facebook.com
+      - +.youtube.com
+  nameserver-policy: ~
+
+cfw-bypass:
+  - qq.com
+  - music.163.com
+  - "*.music.126.net"
+  - localhost
+  - 127.*
+  - 10.*
+  - 172.16.*
+  - 172.17.*
+  - 172.18.*
+  - 172.19.*
+  - 172.20.*
+  - 172.21.*
+  - 172.22.*
+  - 172.23.*
+  - 172.24.*
+  - 172.25.*
+  - 172.26.*
+  - 172.27.*
+  - 172.28.*
+  - 172.29.*
+  - 172.30.*
+  - 172.31.*
+  - 192.168.*
+  - <local>
+cfw-latency-timeout: 5000
+
+use: &use
+  type: select
+  use:
+  - IKUUU
+  - IKUUU2
+  - KB
+
+proxy-providers:
+  vpn1:
+    type: http
+    url: "订阅链接"
+    interval: 3600
+    path: ./proxy_providers/ikuuu.yaml
+    health-check:
+      enable: true
+      interval: 600
+      # lazy: true
+      url: http://www.gstatic.com/generate_204
+
+  vpn2:
+    type: http
+    url: "订阅链接"
+    interval: 3600
+    path: ./proxy_providers/ikuuu2.yaml
+    health-check:
+      enable: true
+      interval: 600
+      # lazy: true
+      url: http://www.gstatic.com/generate_204
+
+  vpn3:
+    type: http
+    url: "订阅链接"
+    interval: 3600
+    path: ./proxy_providers/kb.yaml
+    health-check:
+      enable: true
+      interval: 600
+      # lazy: true
+      url: http://www.gstatic.com/generate_204
+
+proxies:
+
+proxy-groups:
+  - name: 🌐 Merge
+    type: select
+    proxies:
+      - 💮 Auto
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - DIRECT
+
+  - name: 💮 Auto
+    type: url-test
+    use:
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+    interval: 3600
+    url: http://www.gstatic.com/generate_204
+
+  - name: 🔰 IKUUU
+    type: select
+    use:
+      - vpn1
+    interval: 3600
+    url: http://www.gstatic.com/generate_204
+
+  - name: 🔰 IKUUU2
+    type: select
+    use:
+      - vpn2
+    interval: 3600
+    url: http://www.gstatic.com/generate_204
+
+  - name: 🔰 KB
+    type: select
+    use:
+      - vpn3
+    interval: 3600
+    url: http://www.gstatic.com/generate_204
+
+  - name: 🧱 GFW
+    type: select
+    proxies:
+      - 🌐 Merge
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - 💮 Auto
+      - DIRECT
+
+  - name: 📯 Telegram
+    type: select
+    proxies:
+      - 🌐 Merge
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - 💮 Auto
+      - DIRECT
+
+  - name: 🇨🇳 Tld-Not-CN
+    type: select
+    proxies:
+      - 🌐 Merge
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - 💮 Auto
+      - DIRECT
+
+  - name: 🌀 Google
+    type: select
+    proxies:
+      - 🌐 Merge
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - 💮 Auto
+      - DIRECT
+
+  - name: 🎥 Stream
+    type: select
+    proxies:
+      - 🌐 Merge
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - 💮 Auto
+      - DIRECT
+
+  - name: 🐟 MIS
+    type: select
+    proxies:
+      - 🌐 Merge
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - 💮 Auto
+      - DIRECT
+
+  - name: 🎮 Steam-Download
+    type: select
+    proxies:
+      - DIRECT
+      - 🌐 Merge
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - 💮 Auto
+
+  - name: 🇨🇳 China
+    type: select
+    proxies:
+      - DIRECT
+      - 🔰 vpn1
+      - 🔰 vpn2
+      - 🔰 vpn3
+      - 💮 Auto
+
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: ./ruleset/reject.yaml
+    interval: 86400
+
+  icloud:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"
+    path: ./ruleset/icloud.yaml
+    interval: 86400
+
+  apple:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"
+    path: ./ruleset/apple.yaml
+    interval: 86400
+
+  google:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"
+    path: ./ruleset/google.yaml
+    interval: 86400
+
+  proxy:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
+    path: ./ruleset/proxy.yaml
+    interval: 86400
+
+  direct:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
+    path: ./ruleset/direct.yaml
+    interval: 86400
+
+  private:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
+    path: ./ruleset/private.yaml
+    interval: 86400
+
+  gfw:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt"
+    path: ./ruleset/gfw.yaml
+    interval: 86400
+
+  greatfire:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/greatfire.txt"
+    path: ./ruleset/greatfire.yaml
+    interval: 86400
+
+  tld-not-cn:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt"
+    path: ./ruleset/tld-not-cn.yaml
+    interval: 86400
+
+  telegramcidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt"
+    path: ./ruleset/telegramcidr.yaml
+    interval: 86400
+
+  cncidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
+    path: ./ruleset/cncidr.yaml
+    interval: 86400
+
+  lancidr:
+    type: http
+    behavior: ipcidr
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
+    path: ./ruleset/lancidr.yaml
+    interval: 86400
+
+  applications:
+    type: http
+    behavior: classical
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt"
+    path: ./ruleset/applications.yaml
+    interval: 86400
+
+
+rules:
+ - DOMAIN-SUFFIX,y2mate.com,🌐 Merge
+ - DOMAIN-SUFFIX,teacat.cloud,🌐 Merge
+ - DOMAIN-SUFFIX,xn--4gq62f52gdss.com,🌐 Merge
+ - DOMAIN-SUFFIX,xn--mesv7f5toqlp.club,🌐 Merge
+ - DOMAIN-SUFFIX,1anime.me,🌐 Merge
+ - DOMAIN-SUFFIX,live-video.net,🎥 Stream
+ - DOMAIN-SUFFIX,wetransfer.com,DIRECT
+ - DOMAIN-SUFFIX,imgdb.cn,DIRECT
+ - DOMAIN-SUFFIX,superbed.cn,DIRECT
+ - DOMAIN-SUFFIX,shixin.cf,DIRECT
+ - DOMAIN-SUFFIX,rustdesk.com,DIRECT
+
+
+ - DOMAIN-SUFFIX,steamgames.com,DIRECT
+ - DOMAIN-SUFFIX,steamcontent.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steampipe.steamcontent.tnkjmec.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,st.dl.eccdnx.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,st.dl.bscstorage.net,🎮 Steam-Download
+ - DOMAIN-SUFFIX,st.dl.pinyuncloud.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,dl.steam.clngaa.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,cdn.mileweb.cs.steampowered.com.8686c.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,xz.pphimalayanrt.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,edge.steam-dns.top.comcast.net,🎮 Steam-Download
+ - DOMAIN-SUFFIX,edgecast.cdn.steampipe.steamcontent.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,google.cdn.steampipe.steamcontent.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,google2.cdn.steampipe.steamcontent.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,level3.cdn.steampipe.steamcontent.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steam.eca.qtlglb.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steam.naeu.qtlglb.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steam.ru.qtlglb.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steam.apac.qtlglb.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steampipe-kr.akamaized.net,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steampipe-partner.akamaized.net,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steampipe.akamaized.net,🎮 Steam-Download
+ - DOMAIN-SUFFIX,f3b7q2p3.ssl.hwcdn.net,🎮 Steam-Download
+ - DOMAIN-SUFFIX,telus.cdn.steampipe.steamcontent.com,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steam.cdn.on.net,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steam.cdn.orcon.net.nz,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steam.cdn.slingshot.co.nz,🎮 Steam-Download
+ - DOMAIN-SUFFIX,steam.cdn.webra.ru,🎮 Steam-Download
+
+
+ - DOMAIN,clash.razord.top,DIRECT
+ - DOMAIN,yacd.haishan.me,DIRECT
+ - RULE-SET,applications,DIRECT
+ - RULE-SET,private,DIRECT
+ - RULE-SET,reject,REJECT
+ - RULE-SET,icloud,DIRECT
+ - RULE-SET,apple,DIRECT
+ - RULE-SET,google,🌀 Google
+ - RULE-SET,proxy,🌐 Merge
+ - RULE-SET,gfw,🧱 GFW
+ - RULE-SET,greatfire,🧱 GFW
+ - RULE-SET,tld-not-cn,🇨🇳 Tld-Not-CN
+ - RULE-SET,direct,DIRECT
+ - RULE-SET,lancidr,DIRECT
+ - RULE-SET,cncidr,DIRECT
+ - RULE-SET,telegramcidr,📯 Telegram
+
+ - GEOSITE,ehentai,🌐 Merge
+ - GEOSITE,github,🌐 Merge
+ - GEOSITE,twitter,🌐 Merge
+ - GEOSITE,google,🌀 Google
+ - GEOSITE,telegram,📯 Telegram
+ - GEOSITE,netflix,🌐 Merge
+ - GEOSITE,geolocation-!cn,🐟 MIS
+
+ - GEOIP,google,🌀 Google
+ - GEOIP,netflix,🌐 Merge
+ - GEOIP,telegram,📯 Telegram
+ - GEOIP,twitter,🌐 Merge
+ - GEOSITE,CN,DIRECT
+ - GEOIP,CN,DIRECT
+
+ - MATCH,🐟 MIS

@@ -101,16 +101,16 @@ cfw-latency-timeout: 5000
 use: &use
   type: select
   use:
-  - IKUUU
-  - IKUUU2
-  - KB
+  - vpn1
+  - vpn2
+  - vpn3
 
 proxy-providers:
   vpn1:
     type: http
     url: "订阅链接"
     interval: 3600
-    path: ./proxy_providers/1.yaml
+    path: ./proxy_providers/vpn1.yaml
     health-check:
       enable: true
       interval: 600
@@ -121,7 +121,7 @@ proxy-providers:
     type: http
     url: "订阅链接"
     interval: 3600
-    path: ./proxy_providers/2.yaml
+    path: ./proxy_providers/vpn2.yaml
     health-check:
       enable: true
       interval: 600
@@ -132,7 +132,7 @@ proxy-providers:
     type: http
     url: "订阅链接"
     interval: 3600
-    path: ./proxy_providers/3.yaml
+    path: ./proxy_providers/vpn3.yaml
     health-check:
       enable: true
       interval: 600
@@ -146,35 +146,35 @@ proxy-groups:
     type: select
     proxies:
       - 💮 Auto
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - DIRECT
 
   - name: 💮 Auto
     type: url-test
     use:
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
     interval: 3600
     url: http://www.gstatic.com/generate_204
 
-  - name: 🔰 IKUUU
+  - name: vpn1
     type: select
     use:
       - vpn1
     interval: 3600
     url: http://www.gstatic.com/generate_204
 
-  - name: 🔰 IKUUU2
+  - name: vpn2
     type: select
     use:
       - vpn2
     interval: 3600
     url: http://www.gstatic.com/generate_204
 
-  - name: 🔰 KB
+  - name: vpn3
     type: select
     use:
       - vpn3
@@ -185,9 +185,9 @@ proxy-groups:
     type: select
     proxies:
       - 🌐 Merge
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - 💮 Auto
       - DIRECT
 
@@ -195,9 +195,9 @@ proxy-groups:
     type: select
     proxies:
       - 🌐 Merge
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - 💮 Auto
       - DIRECT
 
@@ -205,9 +205,9 @@ proxy-groups:
     type: select
     proxies:
       - 🌐 Merge
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - 💮 Auto
       - DIRECT
 
@@ -215,9 +215,9 @@ proxy-groups:
     type: select
     proxies:
       - 🌐 Merge
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - 💮 Auto
       - DIRECT
 
@@ -225,9 +225,9 @@ proxy-groups:
     type: select
     proxies:
       - 🌐 Merge
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - 💮 Auto
       - DIRECT
 
@@ -235,9 +235,9 @@ proxy-groups:
     type: select
     proxies:
       - 🌐 Merge
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - 💮 Auto
       - DIRECT
 
@@ -246,18 +246,18 @@ proxy-groups:
     proxies:
       - DIRECT
       - 🌐 Merge
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - 💮 Auto
 
   - name: 🇨🇳 China
     type: select
     proxies:
       - DIRECT
-      - 🔰 vpn1
-      - 🔰 vpn2
-      - 🔰 vpn3
+      - vpn1
+      - vpn2
+      - vpn3
       - 💮 Auto
 
 rule-providers:

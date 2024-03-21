@@ -110,7 +110,7 @@ proxy-providers:
     type: http
     url: "订阅链接"
     interval: 3600
-    path: ./proxy_providers/ikuuu.yaml
+    path: ./proxy_providers/1.yaml
     health-check:
       enable: true
       interval: 600
@@ -121,7 +121,7 @@ proxy-providers:
     type: http
     url: "订阅链接"
     interval: 3600
-    path: ./proxy_providers/ikuuu2.yaml
+    path: ./proxy_providers/2.yaml
     health-check:
       enable: true
       interval: 600
@@ -132,7 +132,7 @@ proxy-providers:
     type: http
     url: "订阅链接"
     interval: 3600
-    path: ./proxy_providers/kb.yaml
+    path: ./proxy_providers/3.yaml
     health-check:
       enable: true
       interval: 600
